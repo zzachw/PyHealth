@@ -10,7 +10,7 @@ from pyhealth.models.utils import batch_to_multihot
 from pyhealth.tokenizer import Tokenizer
 
 # TODO: add support for regression
-VALID_MODE = ["binary", "multiclass", "multilabel"]
+VALID_MODE = ["binary", "multiclass", "multilabel", "sequence"]
 
 
 class BaseModel(ABC, nn.Module):
@@ -22,7 +22,7 @@ class BaseModel(ABC, nn.Module):
         feature_keys: list of keys in samples to use as features,
             e.g. ["conditions", "procedures"].
         label_key: key in samples to use as label (e.g., "drugs").
-        mode: one of "binary", "multiclass", or "multilabel".
+        mode: one of "binary", "multiclass", "multilabel", or sequence.
     """
 
     def __init__(
@@ -31,6 +31,7 @@ class BaseModel(ABC, nn.Module):
         feature_keys: List[str],
         label_key: str,
         mode: str,
+        save_generated_caption: bool = False
     ):
         super(BaseModel, self).__init__()
         assert mode in VALID_MODE, f"mode must be one of {VALID_MODE}"
@@ -38,6 +39,8 @@ class BaseModel(ABC, nn.Module):
         self.feature_keys = feature_keys
         self.label_key = label_key
         self.mode = mode
+        if mode == "sequence":
+            self.save_generated_caption = save_generated_caption
         # used to query the device of the model
         self._dummy_param = nn.Parameter(torch.empty(0))
         return
@@ -232,6 +235,7 @@ class BaseModel(ABC, nn.Module):
             - binary: `F.binary_cross_entropy_with_logits`
             - multiclass: `F.cross_entropy`
             - multilabel: `F.binary_cross_entropy_with_logits`
+            - sequence: `F.cross_entropy`
 
         Returns:
             The default loss function.
@@ -242,6 +246,8 @@ class BaseModel(ABC, nn.Module):
             return F.cross_entropy
         elif self.mode == "multilabel":
             return F.binary_cross_entropy_with_logits
+        elif self.mode == "sequence":
+            return F.cross_entropy
         else:
             raise ValueError("Invalid mode: {}".format(self.mode))
 
