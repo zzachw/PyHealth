@@ -23,3 +23,5 @@ from .grasp import GRASP, GRASPLayer
 from .stagenet import StageNet, StageNetLayer
 from .tcn import TCN, TCNLayer
 from .molerec import MoleRec, MoleRecLayer
+from .torchvision_model import TorchvisionModel
+from .transformers_model import TransformersModel
