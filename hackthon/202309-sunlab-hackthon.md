@@ -12,11 +12,11 @@
 ## Team (continuously updated)
 | Team Name	| Team Members | Paper |
 |-----|------|------|
-| Team 1	| Chaoqi Yang | [BIOT: Biosignal Transformer for Cross-data Learning in the Wild](https://openreview.net/forum?id=c2LZyTyddi) |
+| Team 1	| Chaoqi Yang & Lang Cao | Building the LLM interface for PyHealth (http://35.208.88.194:7861/) |
 
 
 ## How to frame the PR
-You will be implementing one research paper. It can be your own recent ICLR, AAAI, WWW papers or previous research papers or one paper from our prepared list (). Each paper may have new dataset, task definition, and AI models, so your PR may involve adding new datasets, new tasks, and new models. 
+You will be implementing one research paper. It can be your own recent ICLR, AAAI, WWW papers or previous research papers or one paper from our [prepared list](https://docs.google.com/spreadsheets/d/1PNMgDe-llOm1SM5ZyGLkmPysjC4wwaVblPLAHLxejTw/edit#gid=159213380). Each paper may have new dataset, task definition, and AI models, so your PR may involve adding new datasets, new tasks, and new models. 
 - Adding new datasets and tasks can refer to these examples:
     - [Example 1: add SHHS datasets and tasks](https://github.com/sunlabuiuc/PyHealth/pull/162)
     - [Example 2: add TUEV, TUAB datasets and tasks](https://github.com/sunlabuiuc/PyHealth/pull/194)
@@ -112,9 +112,8 @@ You will be implementing one research paper. It can be your own recent ICLR, AAA
 - (50%) Votes from judges (Chaoqi, Zhenbang, Patrick can vote for no more than 3 teams). In total, 3 judges here.
 - Scores: #other_votes / N * 50% + #judge_votes / 3 * 50%
 
-## Rewards ($2000 total)
-- Threshold: score > 50%
-    - 1st Prize: 35% of the prize budget ($700)
-    - 2nd Prize: 25% of the prize budget ($500)
-    - 3rd Prize: 15% of the prize budget ($300)
-    - Best new-participant award: 25% of the prize budget ($500 divided by the number of participated new MS/PhD students)
+## Rewards ($2600 in total)
+- 1st Prize: $1000
+- 2nd Prize: $700
+- 3rd Prize: $500
+- Best new-participant award: $400
