@@ -13,7 +13,13 @@
 | Team Name	| Team Members | Paper |
 |-----|------|------|
 | Team 1	| Chaoqi Yang & Lang Cao | Building the LLM interface for PyHealth (http://35.208.88.194:7861/) |
-
+| Team 2    | John Wu   | Transformer Interpretability (https://arxiv.org/pdf/2103.15679.pdf) | 
+| Team 3    | Xu Cao    | High-Resolution Image Synthesis With Latent Diffusion Models (ICLR submission) |
+| Team 4    | Patrick Jiang & Dina Albassam | DeepNote-GNN: Predicting Hospital Readmission using Clinical Notes and Patient Network | 
+| Team 5 | Siddartha Laghuvarapu | Conformal Prediction Under Covariate shift, Locally Valid Discrminative Prediction Intervals for Deep Learning Models, CoDrug: Conformal Drug Property prediction with denisty estimation under covariate shift | 
+| Team 6 | Namkyeong Lee | Heterogeneous Graph Learning for Multi-modal Medical Data Analysis | 
+| Team 7| Tianfan Fu | GNN series models: GCN, GAT |
+| Team 8 | Trisha Das | TABDDPM: MODELLING TABULAR DATA WITH DIFFUSION MODELS |
 
 ## How to frame the PR
 You will be implementing one research paper. It can be your own recent ICLR, AAAI, WWW papers or previous research papers or one paper from our [prepared list](https://docs.google.com/spreadsheets/d/1PNMgDe-llOm1SM5ZyGLkmPysjC4wwaVblPLAHLxejTw/edit#gid=159213380). Each paper may have new dataset, task definition, and AI models, so your PR may involve adding new datasets, new tasks, and new models. 
