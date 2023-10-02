@@ -20,6 +20,7 @@
 | Team 6 | Namkyeong Lee | Heterogeneous Graph Learning for Multi-modal Medical Data Analysis | 
 | Team 7| Tianfan Fu | GNN series models: GCN, GAT |
 | Team 8 | Trisha Das | TABDDPM: MODELLING TABULAR DATA WITH DIFFUSION MODELS |
+| Team 9 | Jathurshan Pradeepkumar | Towards Interpretable Sleep Stage Classification Using Cross-Modal Transformers |
 
 ## How to frame the PR
 You will be implementing one research paper. It can be your own recent ICLR, AAAI, WWW papers or previous research papers or one paper from our [prepared list](https://docs.google.com/spreadsheets/d/1PNMgDe-llOm1SM5ZyGLkmPysjC4wwaVblPLAHLxejTw/edit#gid=159213380). Each paper may have new dataset, task definition, and AI models, so your PR may involve adding new datasets, new tasks, and new models. 
