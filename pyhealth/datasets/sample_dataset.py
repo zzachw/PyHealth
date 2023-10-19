@@ -187,6 +187,50 @@ class SampleSignalDataset(SampleBaseDataset):
         return "\n".join(lines)
 
 
+class SampleNoteDataset(SampleBaseDataset):
+    """
+    TODO: add documentation
+    """
+    def __init__(self, samples: List[Dict], dataset_name="", task_name=""):
+        super().__init__(samples, dataset_name, task_name)
+        self.patient_to_index: Dict[str, List[int]] = self._index_patient()
+        # self.record_to_index: Dict[str, List[int]] = self._index_record()
+        # self.input_info: Dict = self._validate()
+        self.type_ = "note"
+        self.pos_neg_labels = []
+        self._check_label()
+        
+        
+    def _check_label(self):
+        pos_labels = []
+        neg_labels = []
+        samples = self.samples
+        for i in range(len(samples)):
+            if samples[i]['label'] == 1:
+                pos_labels.append(samples[i]['patient_id'])
+            else:
+                neg_labels.append(samples[i]['patient_id'])
+                
+        self.pos_neg_labels.append(pos_labels)
+        self.pos_neg_labels.append(neg_labels)
+        
+        
+    def _index_patient(self) -> Dict[str, List[int]]:
+        """Helper function which indexes the samples by patient_id.
+
+        Will be called in `self.__init__()`.
+        Returns:
+            patient_to_index: Dict[str, int], a dict mapping patient_id to a list
+                of sample indices.
+        """
+        patient_to_index = {}
+        for idx, sample in enumerate(self.samples):
+            patient_to_index.setdefault(sample["patient_id"], []).append(idx)
+        return patient_to_index
+        
+        
+        
+
 class SampleEHRDataset(SampleBaseDataset):
     """Sample EHR dataset class.
 

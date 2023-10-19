@@ -1,4 +1,5 @@
 from pyhealth.data import Patient, Visit
+from pyhealth.tasks.utils import *
 
 
 # TODO: time_window cannot be passed in to base_dataset
@@ -326,6 +327,47 @@ def readmission_prediction_omop_fn(patient: Patient, time_window=15):
     # no cohort selection
     return samples
 
+
+def readmission_prediction_mimic3_note_fn(patient: Patient, chunk_size=318):
+    """
+    TODO: add documentation
+    """
+    samples = []
+    
+    if patient.attr_dict['attr']['CATEGORY'] == 'Discharge summary' \
+        and 'TEXT' in patient.attr_dict['attr'].keys() \
+        and len(patient.attr_dict['attr']['TEXT']) > 10:
+            
+            text = patient.attr_dict['attr']['TEXT']
+            text = text.replace('\n', ' ')
+            text = text.replace('\r', ' ')
+            text = text.strip().lower()
+            text = clean_text(text)
+            
+            x = text.split()
+            n = int(len(x) / chunk_size)
+            for j in range(n):
+                text_chunk = ' '.join(x[j * chunk_size:(j + 1) * chunk_size])
+                samples.append(
+                    {   
+                        'patient_id': patient.patient_id,
+                        'text': text_chunk,
+                        'label': patient.attr_dict['attr']['OUTPUT_LABEL'],
+                    }
+                )
+            if len(x) % chunk_size > 10:
+                text_chunk = ' '.join(x[-(len(x) % chunk_size):])
+                samples.append(
+                    {
+                        'patient_id': patient.patient_id,
+                        'text': ' '.join(x[-(len(x) % chunk_size):]),
+                        'label': patient.attr_dict['attr']['OUTPUT_LABEL'],
+                    }
+                )
+
+    return samples
+
+            
 
 if __name__ == "__main__":
     from pyhealth.datasets import MIMIC3Dataset
