@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import List, Dict, Union, Callable
+from typing import List, Dict, Union, Callable, Optional
 
 import torch
 import torch.nn as nn
@@ -10,7 +10,7 @@ from pyhealth.models.utils import batch_to_multihot
 from pyhealth.tokenizer import Tokenizer
 
 # TODO: add support for regression
-VALID_MODE = [None, "binary", "multiclass", "multilabel"]
+VALID_MODE = ["binary", "multiclass", "multilabel"]
 
 
 class BaseModel(ABC, nn.Module):
@@ -22,7 +22,9 @@ class BaseModel(ABC, nn.Module):
         feature_keys: list of keys in samples to use as features,
             e.g. ["conditions", "procedures"].
         label_key: key in samples to use as label (e.g., "drugs").
-        mode: one of "binary", "multiclass", or "multilabel".
+        mode: one of "binary", "multiclass", or "multilabel". Default is None.
+            Note that when mode is None, some class methods may not work (e.g.,
+            `get_loss_function` and `prepare_y_prob`).
     """
 
     def __init__(
@@ -30,10 +32,11 @@ class BaseModel(ABC, nn.Module):
         dataset: SampleBaseDataset,
         feature_keys: List[str],
         label_key: str,
-        mode: str,
+        mode: Optional[str] = None,
     ):
         super(BaseModel, self).__init__()
-        assert mode in VALID_MODE, f"mode must be one of {VALID_MODE}"
+        if mode is not None:
+            assert mode in VALID_MODE, f"mode must be one of {VALID_MODE}"
         self.dataset = dataset
         self.feature_keys = feature_keys
         self.label_key = label_key
