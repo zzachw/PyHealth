@@ -323,6 +323,7 @@ the performance for different models doing different tasks on different datasets
    install
    tutorials
    advance_tutorials
+   use_cases
 
 
 .. toctree::
