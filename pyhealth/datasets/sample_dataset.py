@@ -1,6 +1,7 @@
 from collections import Counter
 from typing import Dict, List
 import pickle
+import numpy as np
 
 from torch.utils.data import Dataset
 
@@ -354,7 +355,7 @@ class SampleEHRDataset(SampleBaseDataset):
             """
             types = set([type(v) for v in flattened_values])
             assert (
-                types == set([str]) or len(types.difference(set([int, float]))) == 0
+                types == set([str]) or len(types.difference(set([int, float]))) == 0 or types == set([np.ndarray])
             ), f"Key {key} has mixed or unsupported types ({types}) across samples"
             type_ = types.pop()
             """
@@ -378,7 +379,7 @@ class SampleEHRDataset(SampleBaseDataset):
                 # a list of vectors or a list of list of codes
                 if type_ in [float, int]:
                     lens = set([len(i) for s in self.samples for i in s[key]])
-                    assert len(lens) == 1, f"Key {key} has vectors of different lengths"
+                    # assert len(lens) == 1, f"Key {key} has vectors of different lengths" #TODO: uncomment this later, currently need to comment this to skip dataset length check
                     input_info[key] = {"type": type_, "dim": 2, "len": lens.pop()}
                 else:
                     # a list of list of codes

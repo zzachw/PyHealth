@@ -1,3 +1,4 @@
+# bug fix note: the column names for mimic3 dataset should all be in lower cases instead of upper cases, fixed in this version
 import os
 from typing import Optional, List, Dict, Tuple, Union
 
@@ -23,7 +24,7 @@ class MIMIC3Dataset(BaseEHRDataset):
     We further support the following tables:
         - DIAGNOSES_ICD: contains ICD-9 diagnoses (ICD9CM code) for patients.
         - PROCEDURES_ICD: contains ICD-9 procedures (ICD9PROC code) for patients.
-        - PRESCRIPTIONS: contains medication related order entries (NDC code)
+        - PRESCRIPTIONS: contains medication related order entries (ndc code)
             for patients.
         - LABEVENTS: contains laboratory measurements (MIMIC3_ITEMID code)
             for patients
@@ -62,7 +63,7 @@ class MIMIC3Dataset(BaseEHRDataset):
         >>> dataset = MIMIC3Dataset(
         ...         root="/srv/local/data/physionet.org/files/mimiciii/1.4",
         ...         tables=["DIAGNOSES_ICD", "PRESCRIPTIONS"],
-        ...         code_mapping={"NDC": ("ATC", {"target_kwargs": {"level": 3}})},
+        ...         code_mapping={"ndc": ("ATC", {"target_kwargs": {"level": 3}})},
         ...     )
         >>> dataset.stat()
         >>> dataset.info()
@@ -161,14 +162,14 @@ class MIMIC3Dataset(BaseEHRDataset):
         # read table
         df = pd.read_csv(
             os.path.join(self.root, f"{table}.csv"),
-            dtype={"SUBJECT_ID": str, "HADM_ID": str, "ICD9_CODE": str},
+            dtype={"SUBJECT_ID": str, "HADM_ID": str, "icd9_code": str},
         )
         # drop records of the other patients
         df = df[df["SUBJECT_ID"].isin(patients.keys())]
         # drop rows with missing values
-        df = df.dropna(subset=["SUBJECT_ID", "HADM_ID", "ICD9_CODE"])
+        df = df.dropna(subset=["SUBJECT_ID", "HADM_ID", "icd9_code"])
         # sort by sequence number (i.e., priority)
-        df = df.sort_values(["SUBJECT_ID", "HADM_ID", "SEQ_NUM"], ascending=True)
+        df = df.sort_values(["SUBJECT_ID", "HADM_ID", "seq_num"], ascending=True)
         # group by patient and visit
         group_df = df.groupby("SUBJECT_ID")
 
@@ -176,7 +177,7 @@ class MIMIC3Dataset(BaseEHRDataset):
         def diagnosis_unit(p_id, p_info):
             events = []
             for v_id, v_info in p_info.groupby("HADM_ID"):
-                for code in v_info["ICD9_CODE"]:
+                for code in v_info["icd9_code"]:
                     event = Event(
                         code=code,
                         table=table,
@@ -219,14 +220,14 @@ class MIMIC3Dataset(BaseEHRDataset):
         # read table
         df = pd.read_csv(
             os.path.join(self.root, f"{table}.csv"),
-            dtype={"SUBJECT_ID": str, "HADM_ID": str, "ICD9_CODE": str},
+            dtype={"SUBJECT_ID": str, "HADM_ID": str, "icd9_code": str},
         )
         # drop records of the other patients
         df = df[df["SUBJECT_ID"].isin(patients.keys())]
         # drop rows with missing values
-        df = df.dropna(subset=["SUBJECT_ID", "HADM_ID", "SEQ_NUM", "ICD9_CODE"])
+        df = df.dropna(subset=["SUBJECT_ID", "HADM_ID", "seq_num", "icd9_code"])
         # sort by sequence number (i.e., priority)
-        df = df.sort_values(["SUBJECT_ID", "HADM_ID", "SEQ_NUM"], ascending=True)
+        df = df.sort_values(["SUBJECT_ID", "HADM_ID", "seq_num"], ascending=True)
         # group by patient and visit
         group_df = df.groupby("SUBJECT_ID")
 
@@ -234,7 +235,7 @@ class MIMIC3Dataset(BaseEHRDataset):
         def procedure_unit(p_id, p_info):
             events = []
             for v_id, v_info in p_info.groupby("HADM_ID"):
-                for code in v_info["ICD9_CODE"]:
+                for code in v_info["icd9_code"]:
                     event = Event(
                         code=code,
                         table=table,
@@ -269,20 +270,20 @@ class MIMIC3Dataset(BaseEHRDataset):
             The updated patients dict.
         """
         table = "PRESCRIPTIONS"
-        self.code_vocs["drugs"] = "NDC"
+        self.code_vocs["drugs"] = "ndc"
         # read table
         df = pd.read_csv(
             os.path.join(self.root, f"{table}.csv"),
             low_memory=False,
-            dtype={"SUBJECT_ID": str, "HADM_ID": str, "NDC": str},
+            dtype={"SUBJECT_ID": str, "HADM_ID": str, "ndc": str},
         )
         # drop records of the other patients
         df = df[df["SUBJECT_ID"].isin(patients.keys())]
         # drop rows with missing values
-        df = df.dropna(subset=["SUBJECT_ID", "HADM_ID", "NDC"])
+        df = df.dropna(subset=["SUBJECT_ID", "HADM_ID", "ndc"])
         # sort by start date and end date
         df = df.sort_values(
-            ["SUBJECT_ID", "HADM_ID", "STARTDATE", "ENDDATE"], ascending=True
+            ["SUBJECT_ID", "HADM_ID", "startdate", "enddate"], ascending=True
         )
         # group by patient and visit
         group_df = df.groupby("SUBJECT_ID")
@@ -291,11 +292,11 @@ class MIMIC3Dataset(BaseEHRDataset):
         def prescription_unit(p_id, p_info):
             events = []
             for v_id, v_info in p_info.groupby("HADM_ID"):
-                for timestamp, code in zip(v_info["STARTDATE"], v_info["NDC"]):
+                for timestamp, code in zip(v_info["startdate"], v_info["ndc"]):
                     event = Event(
                         code=code,
                         table=table,
-                        vocabulary="NDC",
+                        vocabulary="ndc",
                         visit_id=v_id,
                         patient_id=p_id,
                         timestamp=strptime(timestamp),
@@ -331,13 +332,14 @@ class MIMIC3Dataset(BaseEHRDataset):
         # read table
         df = pd.read_csv(
             os.path.join(self.root, f"{table}.csv"),
-            dtype={"SUBJECT_ID": str, "HADM_ID": str, "ITEMID": str},
+            dtype={"SUBJECT_ID": str, "HADM_ID": str, "ITEMID": str, "VALUENUM": float},
         )
         # drop records of the other patients
         df = df[df["SUBJECT_ID"].isin(patients.keys())]
         # drop rows with missing values
-        df = df.dropna(subset=["SUBJECT_ID", "HADM_ID", "ITEMID"])
-        # sort by charttime
+        # df = df.dropna(subset=["SUBJECT_ID", "HADM_ID"])
+        df = df.dropna(subset=["SUBJECT_ID", "HADM_ID", "ITEMID", "VALUENUM"])
+        # sort by CHARTTIME
         df = df.sort_values(["SUBJECT_ID", "HADM_ID", "CHARTTIME"], ascending=True)
         # group by patient and visit
         group_df = df.groupby("SUBJECT_ID")
@@ -346,7 +348,7 @@ class MIMIC3Dataset(BaseEHRDataset):
         def lab_unit(p_id, p_info):
             events = []
             for v_id, v_info in p_info.groupby("HADM_ID"):
-                for timestamp, code in zip(v_info["CHARTTIME"], v_info["ITEMID"]):
+                for timestamp, code, valuenum in zip(v_info["CHARTTIME"], v_info["ITEMID"], v_info["VALUENUM"]):
                     event = Event(
                         code=code,
                         table=table,
@@ -354,6 +356,7 @@ class MIMIC3Dataset(BaseEHRDataset):
                         visit_id=v_id,
                         patient_id=p_id,
                         timestamp=strptime(timestamp),
+                        valuenum=valuenum,
                     )
                     events.append(event)
             return events
@@ -377,7 +380,7 @@ if __name__ == "__main__":
             "PRESCRIPTIONS",
             "LABEVENTS",
         ],
-        code_mapping={"NDC": "ATC"},
+        code_mapping={"ndc": "ATC"},
         dev=True,
         refresh_cache=True,
     )
@@ -388,7 +391,7 @@ if __name__ == "__main__":
     #     root="/srv/local/data/physionet.org/files/mimiciii/1.4",
     #     tables=["DIAGNOSES_ICD", "PRESCRIPTIONS"],
     #     dev=True,
-    #     code_mapping={"NDC": ("ATC", {"target_kwargs": {"level": 3}})},
+    #     code_mapping={"ndc": ("ATC", {"target_kwargs": {"level": 3}})},
     #     refresh_cache=False,
     # )
     # print(dataset.stat())

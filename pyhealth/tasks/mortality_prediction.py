@@ -1,5 +1,75 @@
 from pyhealth.data import Patient, Visit
+from datetime import timedelta
 
+def mimic3_48_ihm(patient):
+    """Processes a single patient for the 48hr in-hospital mortality task.
+
+    Mortality prediction aims at predicting whether the patient will decease in the
+    next hospital visit based on the clinical information from current visit
+    (e.g., conditions and procedures).
+
+    Args:
+        patient: a Patient object
+
+    Returns:
+        samples: a list of samples, each sample is a dict with patient_id,
+            visit_id, and other task-specific attributes as key
+
+    Note that we define the task as a binary classification task.
+
+    Examples:
+        >>> from pyhealth.datasets import MIMIC3Dataset
+        >>> mimic3_base = MIMIC3Dataset(
+        ...    root="/srv/local/data/physionet.org/files/mimiciii/1.4",
+        ...    tables=["DIAGNOSES_ICD", "PROCEDURES_ICD", "PRESCRIPTIONS"],
+        ...    code_mapping={"ICD9CM": "CCSCM"},
+        ... )
+        >>> from pyhealth.tasks import mimic3_48_ihm
+        >>> mimic3_sample = mimic3_base.set_task(mimic3_48_ihm)
+        >>> mimic3_sample.samples[0]
+        [{'visit_id': '130744', 'patient_id': '103', 'conditions': [['42', '109', '19', '122', '98', '663', '58', '51']], 'procedures': [['1']], 'label': 0}]
+    """
+    raise NotImplementedError("This task function is currently deprecated!")
+    # selected_labitem_ids = {'51221':0, '50971':1, '50983':2, '50912':3, '50902':4} # TODO: use LABEVENTS.csv group statistics to optimize this
+    # samples = []
+
+    # # we will drop the last visit
+    # for i in range(len(patient)):
+    #     visit: Visit = patient[i]
+        
+    #     assert visit.discharge_status in [0, 1], f"Unexpected discharge status for Visit {visit}"
+    #     mortality_label = int(visit.discharge_status)
+        
+    #     # exclude the event happened after 48 hrs window on admission of the hospital
+    #     # import pdb
+    #     # pdb.set_trace()
+    #     labevents = visit.get_event_list(table="LABEVENTS")
+    #     x_ts = [[] for _ in range(len(selected_labitem_ids))]
+    #     t_ts = [[] for _ in range(len(selected_labitem_ids))]
+    #     for event in labevents:
+    #         if event.timestamp > visit.encounter_time + timedelta(days=2):
+    #             break 
+    #         if event.code in selected_labitem_ids:
+    #             l = selected_labitem_ids[event.code]
+    #             x_ts[l].append(event.attr_dict['valuenum'])
+    #             t_ts[l].append(event.timestamp)
+                
+    #     # exclude: visits without lab events
+    #     if len(labevents) == 0:
+    #         continue
+    #     # TODO: should also exclude visit with age < 18
+    #     samples.append(
+    #         {
+    #             "visit_id": visit.visit_id,
+    #             "patient_id": patient.patient_id,
+    #             "x_ts": x_ts,
+    #             "t_ts": t_ts,
+    #             "period_length": 48,
+    #             "label": mortality_label,
+    #         }
+    #     )
+    # # no cohort selection
+    # return samples
 
 def mortality_prediction_mimic3_fn(patient: Patient):
     """Processes a single patient for the mortality prediction task.
@@ -257,7 +327,8 @@ def mortality_prediction_eicu_fn2(patient: Patient):
                 "label": mortality_label,
             }
         )
-    print(samples)
+        
+    # print(samples)
     # no cohort selection
     return samples
 
